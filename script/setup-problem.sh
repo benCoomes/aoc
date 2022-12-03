@@ -3,8 +3,12 @@
 # usage: ./setup-problem <year> <day>
 
 # prereqs:
+
 # Store your AoC session cookie in keychain:
 # security add-generic-password -a "$USER" -s "AOC_SESSION" -w "session=<YOUR_SESSION>"
+
+# Then export the AOC_SESSION variable:
+# export AOC_SESSION=$(security find-generic-password -s "AOC_SESSION" -w)
 
 if [ "$#" -ne 2 ]; then
   echo "usage: ./setup-problem <year> <day>"
