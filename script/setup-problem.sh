@@ -22,5 +22,5 @@ DAY=$((10#$2))
 PROBLEM_DIR="$YEAR/day$DAY"
 
 mkdir -p $PROBLEM_DIR
-cp -n $(dirname "$0")/../templates/solution.rb $PROBLEM_DIR/solution.rb
+cp -n $(dirname "$0")/../templates/*.rb $PROBLEM_DIR
 curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > $PROBLEM_DIR/input.txt
