@@ -63,27 +63,24 @@ module RPS
   end
 end
 
-def part1
+def part1(file)
   total_score = 0
-  File.foreach('input.txt') do |line|
+  File.foreach(file) do |line|
     opp, you = line.split(' ').map { |x| RPS::Item.from_symbol(x.to_sym) } 
     score = you.points_against(opp) + you.inherrent_worth
     total_score += score
   end
-  puts total_score
+  total_score
 end
 
-def part2
+def part2(file)
   total_score = 0
-  File.foreach('input.txt') do |line|
+  File.foreach(file) do |line|
     opp, result = line.split(' ')
     opp = RPS::Item.from_symbol(opp.to_sym)
     result = RPS::Item::OUTCOME_FOR[result.to_sym]
     you = opp.choice_for_result(result)
     total_score += you.points_against(opp) + you.inherrent_worth
   end
-  puts total_score
+  total_score
 end
-
-part1
-part2

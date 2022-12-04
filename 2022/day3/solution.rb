@@ -29,19 +29,15 @@ class Bagpack
 end
 
 def part1(file)
-  puts "part 1 (#{file}):"
-
   sum = 0
   File.foreach(file) do |line|
     bp = Bagpack.new(line)
     sum += Bagpack.priority_sum(bp.items_in_both_compartments)
   end
-  puts sum
+  sum
 end
 
 def part2(file)
-  puts "part 2 (#{file}):"
-
   packs = []
   File.foreach(file) do |line|
     packs << Bagpack.new(line)
@@ -53,11 +49,5 @@ def part2(file)
     shared = g.first.shared_items(g.slice(1..))
     sum += Bagpack.priority_sum(shared)
   end
-  puts sum
+  sum
 end
-
-part1('sample.txt')
-part1('input.txt')
-
-part2('sample.txt')
-part2('input.txt')
