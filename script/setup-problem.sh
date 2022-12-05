@@ -23,4 +23,5 @@ PROBLEM_DIR="$YEAR/day$DAY"
 
 mkdir -p $PROBLEM_DIR
 cp -n $(dirname "$0")/../templates/*.rb $PROBLEM_DIR
+touch $PROBLEM_DIR/sample.txt
 curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > $PROBLEM_DIR/input.txt
