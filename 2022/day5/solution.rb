@@ -59,8 +59,10 @@ def part1(file)
 end
 
 def part2(file)
-  File.foreach(file) do |line|
-    # part 2 solution here
+  stacks, moves = parse_stacks_and_moves(file)
+  moves.each do |move|
+    crates = stacks[move[:from]].pop(move[:move])
+    stacks[move[:to]].concat(crates)
   end
-  :no_answer
+  stacks.map(&:last).join
 end
