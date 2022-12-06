@@ -1,23 +1,22 @@
 # frozen_string_literal:true
 
-def part1(file)
-  code_index = 0
-  File.foreach(file) do |line|
-    chars = line.chars
-    code_index = chars.each_with_index do |_, index|
-      next if index < 4
+def first_unique_block(input, min_size)
+  chars = input.chars
+  chars.each_with_index do |_, index|
+    next if index < min_size
 
-      start = index - 4
-      code = line[start...index].chars
-      break index if code.uniq.size == 4
-    end
+    start = index - min_size
+    code = chars[start...index]
+    break index if code.uniq.size == min_size
   end
-  code_index
+end
+
+def part1(file)
+  input = File.read(file)
+  first_unique_block(input, 4)
 end
 
 def part2(file)
-  File.foreach(file) do |line|
-    # part 2 solution here
-  end
-  :no_answer
+  input = File.read(file)
+  first_unique_block(input, 14)
 end
