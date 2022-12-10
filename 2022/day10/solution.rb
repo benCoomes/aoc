@@ -48,7 +48,7 @@ end
 
 def print_screen(cycle, reg)
   pos = (cycle-1) % 40
-  pixel = ([reg-1, reg, reg+1].include? pos) ? '#' : ' '
+  pixel = ([reg-1, reg, reg+1].include? pos) ? '🟩'  : '⬛'
   print pixel
   if cycle % 40 == 0
     puts "\n"
