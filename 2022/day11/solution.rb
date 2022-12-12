@@ -3,7 +3,7 @@
 require 'prime'
 
 class Monkey
-  attr_accessor :id, :inspect_count, :items
+  attr_accessor :id, :inspect_count, :items, :divisor
 
   def initialize(input)
     lines = input.split("\n")
@@ -20,9 +20,14 @@ class Monkey
     @inspect_count = 0
   end
 
-  def toss_items(other_monkies)
+  def toss_items(other_monkies, mod = nil)
     @items.each do |i|
-      i = (@op.call(i) / 3)
+      i = @op.call(i)
+      if mod
+        i = i % mod # part 2 solution. todo: understand why this this works!
+      else
+        i /= 3
+      end
       @inspect_count += 1
       if i % @divisor == 0
         other_monkies[@true_target].add_item(i)
@@ -106,13 +111,13 @@ end
 def part2(file)
   input = File.read(file)
   pars = paragraphs(input)
-  monkies = pars.map { |p| PrimeMonkey.new(p) }.map { |m| [m.id, m] }.to_h
-
+  monkies = pars.map { |p| Monkey.new(p) }.map { |m| [m.id, m] }.to_h
+  lcm = monkies.each_value.map(&:divisor).inject(:lcm)
   start = Time.now
   1_000.times do |i|
     puts "#{i}: #{Time.now - start}" if (i % 20).zero?
     monkies.each_value do |m|
-      m.toss_items(monkies)
+      m.toss_items(monkies, lcm)
     end
   end
 
@@ -121,6 +126,10 @@ def part2(file)
   most_throws = monkies.values.map(&:inspect_count).sort.last(2)
   most_throws[0] * most_throws[1]
 end
+
+#####################################
+# Abandoned attempts below this point
+#####################################
 
 class DivCacheNum
   # tried this - too slow, over 1 min to get past 1000
