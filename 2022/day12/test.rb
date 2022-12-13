@@ -21,5 +21,5 @@ end
 
 AOCTestCase.new(1, 'sample.txt', 31).run if test_sample
 AOCTestCase.new(1, 'input.txt', 412).run if test_input
-AOCTestCase.new(2, 'sample.txt', :unknown_answer).run if test_sample
-AOCTestCase.new(2, 'input.txt', :unknown_answer).run if test_input
+AOCTestCase.new(2, 'sample.txt', 29).run if test_sample
+AOCTestCase.new(2, 'input.txt', 402).run if test_input

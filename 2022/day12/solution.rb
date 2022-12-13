@@ -28,12 +28,35 @@ class Terrain
     byebug
   end
 
+  def points_at_height(height_char)
+    int_height = height_char.bytes.first - OFFSET
+    coords = []
+    @map.each_with_index do |row, y|
+      row.each_with_index do |h, x|
+        coords << { x: x, y: y } if h == int_height
+      end
+    end
+    coords
+  end
+
+  def first_col
+    (0...@map.size).map { |ri| {x: 0, y: ri } }
+  end
+
   def set_hist(coord)
     @visit_history[coord[:y]][coord[:x]] = coord[:moves]
   end
 
   def get_hist(coord)
     @visit_history[coord[:y]][coord[:x]]
+  end
+
+  def reset_hist
+    @visit_history.each do |row|
+      row.each_with_index do |_, i|
+        row[i] = UNVISITED
+      end
+    end
   end
 
   def exists?(coord)
@@ -82,8 +105,8 @@ class Terrain
     end
   end
 
-  def shortest_path_len
-    start = start_pos
+  def shortest_path_len(start = nil)
+    start ||= start_pos
     start[:moves] = 0
     set_hist(start)
     check_queue = adjacent(start)
@@ -100,7 +123,7 @@ class Terrain
       iter += 1
       if check_queue.empty?
         if get_hist(end_pos) == UNVISITED
-          shortest_path = coord[:moves] + 1
+          shortest_path = UNVISITED
         else
           shortest_path = get_hist(end_pos)
         end
@@ -139,8 +162,19 @@ def part1(file)
 end
 
 def part2(file)
-  File.foreach(file) do |line|
-    # part 2 solution here
+  terrain = Terrain.new(file)
+  # Hack! For some reason the algorithm is jumping from a -> c.
+  # But, searching for 'b' in the input shows that only the first row contains valid starting points
+  # (and the entire 1st row is a valid starting point)
+  # I want to use 'points_at_height', but first_col will do.
+  # TODO: why is the algoithm escaping from boxed in areas, like the one at {x:69, y:38} ?
+  low_points = terrain.first_col
+  min_len = UNVISITED
+
+  low_points.each_with_index do |start, i|
+    len = terrain.shortest_path_len(start)
+    min_len = len if len < min_len
+    terrain.reset_hist
   end
-  :no_answer
+  min_len
 end
