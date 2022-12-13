@@ -19,7 +19,7 @@ class Terrain
       @visit_history << Array.new(map_row.size, UNVISITED)
     end
     goal = end_pos # side-effect! memoize this when 'E'
-    @map[goal[:y]][goal[:x]] = 'z'.bytes.first
+    @map[goal[:y]][goal[:x]] = 'z'.bytes.first - OFFSET
   end
 
   def height_at(coord)
@@ -58,17 +58,20 @@ class Terrain
   end
 
   def visualize
+    lines = ""
     @visit_history.each_with_index do |row, y|
       line = ""
       row.each_with_index do |h, x|
         if h == UNVISITED
-          line += @letters[y][x].rjust(3)
+          line += @letters[y][x].rjust(4)
         else
-          line += h.to_s.rjust(3)
+          line += h.to_s.rjust(4)
         end
       end
-      puts line
+      lines += line + "\n"
     end
+    print lines
+    STDOUT.flush
   end
 
   def find_point(search)
@@ -88,8 +91,6 @@ class Terrain
     iter = 1
     shortest_path = -1
     until check_queue.empty?
-      p "#{iter}: (#{check_queue.size})" if (iter % 100).zero?
-
       coord = check_queue.shift
       if get_hist(coord) > coord[:moves]
         set_hist(coord)
@@ -98,7 +99,6 @@ class Terrain
 
       iter += 1
       if check_queue.empty?
-        byebug
         if get_hist(end_pos) == UNVISITED
           shortest_path = coord[:moves] + 1
         else
@@ -136,7 +136,6 @@ end
 def part1(file)
   terrain = Terrain.new(file)
   terrain.shortest_path_len
-  # currently broken :(
 end
 
 def part2(file)
