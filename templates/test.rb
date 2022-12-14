@@ -2,6 +2,7 @@
 
 require './solution'
 require '../../lib/microtest'
+require 'byebug'
 
 test_sample = false
 test_input = false
