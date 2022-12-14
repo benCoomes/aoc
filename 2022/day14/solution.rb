@@ -1,6 +1,8 @@
 # frozen_string_literal:true
 
 def parse_rocks(file)
+  # Lib Idea - Rocks is a 'sparse array', which is a hash that contains only set values, and has defaults otherwise
+  # Could be a useful class for printing, setting points, lines, etc.
   rocks = Hash.new do |col_hash, x| 
     col_hash[x] = Hash.new do |row_hash, y| 
       row_hash[y] = :air
@@ -39,10 +41,11 @@ def draw_rock_line(rocks, p1, p2)
   end
 end
 
-def print_rocks(rocks, h)
+def print_rocks(rocks)
   minx = rocks.keys.min
   maxx = rocks.keys.max
-  (0..h).each do |y|
+  height = rocks.values.map { |col| col.keys.max }.max + 1
+  (0..height).each do |y|
     (minx-1..maxx+1).each do |x|
       char = rocks[x][y] == :rock ? '#' : '.'
       print char
@@ -53,8 +56,7 @@ end
 
 def part1(file)
   rocks = parse_rocks(file)
-  print_rocks(rocks, 10)
-  byebug
+  print_rocks(rocks)
 end
 
 def part2(file)
