@@ -22,12 +22,37 @@ class Rocks
     end
   end
 
+  def drop_sand_check_abyss
+    pos = drop_sand
+    pos[:y] < height
+  end
+
+  def height
+    @rocks.values.map { |col| col.reject{ |_,v| v == :air }.keys.max || 0 }.max
+  end
+
+  def print_map
+    symbols = {rock: '#', air: '.', sand: 'o'}
+    minx = @rocks.keys.min
+    maxx = @rocks.keys.max
+    draw_height = height + 1
+    (0..draw_height).each do |y|
+      (minx-1..maxx+1).each do |x|
+        char = symbols[@rocks[x][y]]
+        print char
+      end
+      puts ''
+    end
+  end
+
+  private
+
   def drop_sand
     into_abyss = false
     stopped = false
     pos = { x: 500, y: 0 }
 
-    while !stopped && !into_abyss
+    until stopped || into_abyss
       down = @rocks[pos[:x]][pos[:y] + 1]
       if down == :air
         pos[:y] += 1
@@ -55,29 +80,8 @@ class Rocks
     end
 
     @rocks[pos[:x]][pos[:y]] = :sand
-
-    !into_abyss
+    pos
   end
-
-  def height
-    @rocks.values.map { |col| col.reject{ |_,v| v == :air }.keys.max || 0 }.max
-  end
-
-  def print_map
-    symbols = {rock: '#', air: '.', sand: 'o'}
-    minx = @rocks.keys.min
-    maxx = @rocks.keys.max
-    draw_height = height + 1
-    (0..draw_height).each do |y|
-      (minx-1..maxx+1).each do |x|
-        char = symbols[@rocks[x][y]]
-        print char
-      end
-      puts ''
-    end
-  end
-
-  private
 
   def draw_rock_line(p1, p2)
     xdiff = p1[:x] - p2[:x]
@@ -105,7 +109,7 @@ def part1(file)
   rocks = Rocks.new(file)
   rocks.print_map
   count = 0
-  while rocks.drop_sand && count < 10000 do
+  while rocks.drop_sand_check_abyss && count < 10000 do
     count += 1
   end
   rocks.print_map
