@@ -1,62 +1,115 @@
 # frozen_string_literal:true
 
-def parse_rocks(file)
-  # Lib Idea - Rocks is a 'sparse array', which is a hash that contains only set values, and has defaults otherwise
-  # Could be a useful class for printing, setting points, lines, etc.
-  rocks = Hash.new do |col_hash, x| 
-    col_hash[x] = Hash.new do |row_hash, y| 
-      row_hash[y] = :air
+class Rocks
+  def initialize(file)
+    # Lib idea - Rocks is a 'sparse array', which is a hash that contains only set values, and has defaults otherwise
+    # Could be a useful class for printing, setting points, lines, etc.
+    @rocks = Hash.new do |col_hash, x| 
+      col_hash[x] = Hash.new do |row_hash, y| 
+        row_hash[y] = :air
+      end
+    end
+
+    File.foreach(file) do |line|
+      pairs = line.split(' -> ').map do |c|
+        x, y = c.split(',')
+        { x: x.to_i, y: y.to_i }
+      end.each_cons(2)
+
+      pairs.each do |p1, p2|
+        draw_rock_line(p1, p2)
+      end
     end
   end
 
-  File.foreach(file) do |line|
-    pairs = line.split(' -> ').map do |c|
-      x, y = c.split(',')
-      { x: x.to_i, y: y.to_i }
-    end.each_cons(2)
+  def drop_sand
+    into_abyss = false
+    stopped = false
+    pos = { x: 500, y: 0 }
 
-    pairs.each do |p1, p2|
-      draw_rock_line(rocks, p1, p2)
+    while !stopped && !into_abyss
+      down = @rocks[pos[:x]][pos[:y] + 1]
+      if down == :air
+        pos[:y] += 1
+        into_abyss = true if pos[:y] > height
+        next
+      end
+
+      left_down = @rocks[pos[:x] - 1][pos[:y] + 1]
+      if left_down == :air
+        pos[:x] -= 1
+        pos[:y] += 1
+        into_abyss = true if pos[:y] > height
+        next
+      end
+
+      right_down = @rocks[pos[:x] + 1][pos[:y] + 1]
+      if right_down == :air
+        pos[:x] += 1
+        pos[:y] += 1
+        into_abyss = true if pos[:y] > height
+        next
+      end
+
+      stopped = true
+    end
+
+    @rocks[pos[:x]][pos[:y]] = :sand
+
+    !into_abyss
+  end
+
+  def height
+    @rocks.values.map { |col| col.reject{ |_,v| v == :air }.keys.max || 0 }.max
+  end
+
+  def print_map
+    symbols = {rock: '#', air: '.', sand: 'o'}
+    minx = @rocks.keys.min
+    maxx = @rocks.keys.max
+    draw_height = height + 1
+    (0..draw_height).each do |y|
+      (minx-1..maxx+1).each do |x|
+        char = symbols[@rocks[x][y]]
+        print char
+      end
+      puts ''
     end
   end
-  rocks
-end
 
-def draw_rock_line(rocks, p1, p2)
-  xdiff = p1[:x] - p2[:x]
-  ydiff = p1[:y] - p2[:y]
-  raise 'Diagonal rock' unless xdiff.zero? || ydiff.zero?
+  private
 
-  y = p1[:y]
-  x = p1[:x]
+  def draw_rock_line(p1, p2)
+    xdiff = p1[:x] - p2[:x]
+    ydiff = p1[:y] - p2[:y]
+    raise 'Diagonal rock' unless xdiff.zero? || ydiff.zero?
 
-  if xdiff.positive?
-    (p2[:x]..p1[:x]).each { |x| rocks[x][y] = :rock }
-  elsif xdiff.negative?
-    (p1[:x]..p2[:x]).each { |x| rocks[x][y] = :rock }
-  elsif ydiff.positive?
-    (p2[:y]..p1[:y]).each { |y| rocks[x][y] = :rock }
-  elsif ydiff.negative?
-    (p1[:y]..p2[:y]).each { |y| rocks[x][y] = :rock }
-  end
-end
+    y = p1[:y]
+    x = p1[:x]
 
-def print_rocks(rocks)
-  minx = rocks.keys.min
-  maxx = rocks.keys.max
-  height = rocks.values.map { |col| col.keys.max }.max + 1
-  (0..height).each do |y|
-    (minx-1..maxx+1).each do |x|
-      char = rocks[x][y] == :rock ? '#' : '.'
-      print char
+    if xdiff.positive?
+      (p2[:x]..p1[:x]).each { |x| @rocks[x][y] = :rock }
+    elsif xdiff.negative?
+      (p1[:x]..p2[:x]).each { |x| @rocks[x][y] = :rock }
+    elsif ydiff.positive?
+      (p2[:y]..p1[:y]).each { |y| @rocks[x][y] = :rock }
+    elsif ydiff.negative?
+      (p1[:y]..p2[:y]).each { |y| @rocks[x][y] = :rock }
     end
-    puts ''
   end
 end
+
+
 
 def part1(file)
-  rocks = parse_rocks(file)
-  print_rocks(rocks)
+  rocks = Rocks.new(file)
+  rocks.print_map
+  count = 0
+  while rocks.drop_sand && count < 10000 do
+    count += 1
+  end
+  rocks.print_map
+  count
 end
 
 def part2(file)
