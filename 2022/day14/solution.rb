@@ -28,7 +28,7 @@ class Rocks
   end
 
   def height
-    @rocks.values.map { |col| col.reject{ |_,v| v == :air }.keys.max || 0 }.max
+    @height ||= @rocks.values.map { |col| col.select{ |_,v| v == :rock }.keys.max || 0 }.max
   end
 
   def print_map
