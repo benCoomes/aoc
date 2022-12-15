@@ -1,7 +1,7 @@
 # frozen_string_literal:true
 
 class Rocks
-  def initialize(file)
+  def initialize(file, with_bottom = false)
     # Lib idea - Rocks is a 'sparse array', which is a hash that contains only set values, and has defaults otherwise
     # Could be a useful class for printing, setting points, lines, etc.
     @rocks = Hash.new do |col_hash, x| 
@@ -20,11 +20,23 @@ class Rocks
         draw_rock_line(p1, p2)
       end
     end
+
+    if with_bottom 
+      left = {x: 500 - (height*2), y: height + 2 }
+      right = {x: 500 + (height*2), y: height + 2}
+      draw_rock_line(left, right)
+      @height = nil # adding floor changes height
+    end
   end
 
   def drop_sand_check_abyss
     pos = drop_sand
-    pos[:y] < height
+    pos[:y] >= height
+  end
+
+  def drop_sand_check_at_top
+    pos = drop_sand
+    pos[:x] == 500 && pos[:y] == 0
   end
 
   def height
@@ -107,18 +119,22 @@ end
 
 def part1(file)
   rocks = Rocks.new(file)
-  rocks.print_map
+  #rocks.print_map
   count = 0
-  while rocks.drop_sand_check_abyss && count < 10000 do
+  while !rocks.drop_sand_check_abyss && count < 10_000 do
     count += 1
   end
-  rocks.print_map
+  #rocks.print_map
   count
 end
 
 def part2(file)
-  File.foreach(file) do |line|
-    # part 2 solution here
+  rocks = Rocks.new(file, with_bottom: true)
+  #rocks.print_map
+  count = 0
+  while !rocks.drop_sand_check_at_top && count < 100_000
+    count += 1
   end
-  :no_answer
+  #rocks.print_map
+  count + 1 # eh :)
 end
