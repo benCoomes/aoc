@@ -1,6 +1,6 @@
-#!/bin/zsh
+#!/bin/bash
 
-# usage: ./setup <year> <day>
+# usage: ./setup-problem <year> <day>
 
 # prereqs:
 
@@ -22,6 +22,6 @@ DAY=$((10#$2))
 PROBLEM_DIR="$YEAR/day$DAY"
 
 mkdir -p $PROBLEM_DIR
-cp -n $(dirname "$0")/../templates/*.rb $PROBLEM_DIR
-touch $PROBLEM_DIR/sample.txt
-curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > $PROBLEM_DIR/input.txt
+cd $PROBLEM_DIR
+touch sample.txt
+curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > input.txt
