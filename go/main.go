@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/benCoomes/aoc/go/2023/day01"
+	"github.com/benCoomes/aoc/go/2023/day02"
 )
 
 func main() {
@@ -17,17 +20,21 @@ func main() {
 		panic("Cannot convert to int: '" + os.Args[1] + "'")
 	}
 
-	folder := fmt.Sprintf("day%d", day)
 	switch day {
 	case 1:
-		day01(folder+"/sample.txt", folder+"/input.txt")
+		report(day01.Solve([]string{"sample"}))
+	case 2:
+		report(day02.Solve([]string{"sample"}))
 	default:
 		fmt.Println("Unknown day:", day)
+		os.Exit(1)
 	}
 }
 
-func day01(sample string, input string) {
-	fmt.Println("Day 1")
-	fmt.Println("Sample file:", sample)
-	fmt.Println("Input file:", input)
+func report(value string, err error) {
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(value)
 }

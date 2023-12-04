@@ -18,10 +18,11 @@ fi
 # strip leading zeros (and throw if not number)
 YEAR=$((10#$1))
 DAY=$((10#$2))
+RAWDAY=$2
 
-PROBLEM_DIR="$YEAR/day$DAY"
+PROBLEM_DIR="$YEAR/inputs"
 
 mkdir -p $PROBLEM_DIR
 cd $PROBLEM_DIR
-touch sample.txt
-curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > input.txt
+touch day$RAWDAY-sample.txt
+curl --cookie $AOC_SESSION https://adventofcode.com/$YEAR/day/$DAY/input > day$RAWDAY-input.txt
