@@ -24,9 +24,9 @@ func main() {
 	switch day {
 	case 1:
 		value, err := day01.Solve(readSample(day))
-		report(value, "", err)
-		//value, err = day01.Solve(readInput(day))
-		//report(value, "", err)
+		report(value, "142", err)
+		value, err = day01.Solve(readInput(day))
+		report(value, "54940", err)
 	case 2:
 		// todo
 	default:
@@ -49,6 +49,7 @@ func report(value string, expected string, err error) {
 			fmt.Printf("Pass! Value: %v", value)
 		}
 	}
+	fmt.Println()
 }
 
 func readInput(day int) []string {
