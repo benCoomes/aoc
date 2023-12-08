@@ -2,12 +2,13 @@ package test
 
 import "testing"
 
-func Report(t *testing.T, value string, expected string, err error) {
+func Report[C comparable](t *testing.T, value C, expected C, err error) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	if expected == "" {
+	var zeroVal C
+	if expected == zeroVal {
 		t.Logf("Value: %v", value)
 	} else {
 		if value != expected {
