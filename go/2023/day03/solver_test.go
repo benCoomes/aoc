@@ -19,10 +19,10 @@ func Test_A_Full(t *testing.T) {
 
 func Test_B_Sample(t *testing.T) {
 	value, err := SolveB(input.ReadSampleB())
-	test.Report(t, value, 0, err)
+	test.Report(t, value, 467835, err)
 }
 
 func Test_B_Full(t *testing.T) {
 	value, err := SolveB(input.ReadInput())
-	test.Report(t, value, 0, err)
+	test.Report(t, value, 80179647, err)
 }

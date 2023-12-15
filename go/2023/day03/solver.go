@@ -40,8 +40,51 @@ func SolveA(input []string) (int, error) {
 
 }
 
+var gearParser = regexp.MustCompile(`\*`)
+
 func SolveB(input []string) (int, error) {
-	return 0, nil
+	sum := 0
+	for y, line := range input {
+		// find gears
+		gears := gearParser.FindAllStringIndex(line, -1)
+		for _, gear_index := range gears {
+			numbers := make([]int, 0)
+			// parse numbers for line, above, and below
+			for li := y - 1; li <= y+1; li++ {
+				if li < 0 || li >= len(input) {
+					continue
+				}
+				line = input[li]
+				adjnums, err := AdjacentNumbers(line, gear_index[0])
+				if err != nil {
+					return 0, err
+				}
+				numbers = append(numbers, adjnums...)
+			}
+			if len(numbers) == 2 {
+				// a gear!
+				sum += numbers[0] * numbers[1]
+			}
+		}
+	}
+
+	return sum, nil
+}
+
+func AdjacentNumbers(line string, index int) ([]int, error) {
+	numbers := make([]int, 0)
+	num_indices := numParser.FindAllStringIndex(line, -1)
+	for _, indices := range num_indices {
+		// x1 <= g+1 && x2 >= x-1 should work for all lines
+		if indices[0] <= index+1 && indices[1] >= index {
+			value, err := strconv.Atoi(line[indices[0]:indices[1]])
+			if err != nil {
+				return nil, err
+			}
+			numbers = append(numbers, value)
+		}
+	}
+	return numbers, nil
 }
 
 type Coord struct {
