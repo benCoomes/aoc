@@ -23,6 +23,9 @@ RAWDAY=$2
 PROBLEM_DIR="$YEAR/day$RAWDAY"
 
 mkdir -p $PROBLEM_DIR
+cat ./templates/solver.go.txt | sed "s/<DAY>/$RAWDAY/g" > $PROBLEM_DIR/solver.go
+cat ./templates/solver_test.go.txt | sed "s/<DAY>/$RAWDAY/g" > $PROBLEM_DIR/solver_test.go
+
 cd $PROBLEM_DIR
 touch sample-a.txt
 touch sample-b.txt

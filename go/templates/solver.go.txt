@@ -1,0 +1,9 @@
+package day<DAY>
+
+func SolveA(input []string) (int, error) {
+	return 0, nil
+}
+
+func SolveB(input []string) (int, error) {
+	return 0, nil
+}
