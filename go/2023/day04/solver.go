@@ -3,6 +3,7 @@ package day04
 import (
 	"errors"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -24,8 +25,43 @@ func SolveA(input []string) (int, error) {
 	return sum, nil
 }
 
+type Card struct {
+	winners []int
+	held    []int
+}
+
 func SolveB(input []string) (int, error) {
-	return 0, nil
+	// parse cards
+	cards := make([]Card, len(input))
+	hand := make([]int, len(input))
+
+	for i, rawcard := range input {
+		winners, held, err := ParseCard(rawcard)
+		if err != nil {
+			return 0, err
+		}
+		cards[i] = Card{
+			winners: winners,
+			held:    held,
+		}
+		hand[i] = i
+	}
+
+	// process hands
+	// todo: dynamic programming to remember total count added by processing card[i]
+	// working backwards, use remembered counts instead of processing to increase sum.
+	count := 0
+	for len(hand) > 0 {
+		count += 1
+		i := hand[len(hand)-1]
+		card := cards[i]
+		hand = slices.Delete(hand, len(hand)-1, len(hand))
+
+		wins := len(Intersect(card.winners, card.held))
+		hand = append(hand, CreateRange(i+1, wins)...)
+	}
+
+	return count, nil
 }
 
 func ParseCard(line string) ([]int, []int, error) {
@@ -84,10 +120,20 @@ func Intersect[T comparable](lista []T, listb []T) []T {
 
 	intersection := make([]T, 0)
 	for _, b := range listb {
-		if listamap[b] == true {
+		if listamap[b] {
 			intersection = append(intersection, b)
 		}
 	}
 
 	return intersection
+}
+
+// CreateRange(1, 4) => [1, 2, 3, 4]
+// CreateRange(3, 2) => [3, 4]
+func CreateRange(start int, length int) []int {
+	r := make([]int, length) // todo: what if length is negative?
+	for i := 0; i < length; i++ {
+		r[i] = start + i
+	}
+	return r
 }
